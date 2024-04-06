@@ -1,3 +1,4 @@
+import json
 import socket
 import threading
 
@@ -20,9 +21,14 @@ def handle(client):
     while True:
         try:
             message = client.recv(1024).decode('utf-8')
-            message = f"{nicknames[clients.index(client)]}: {message}"
-            print(f"{message}")
-            broadcast(message.encode('utf-8'))
+            sender = nicknames[clients.index(client)]
+            data = {'sender': sender, 'message': message}
+
+            print(f"{sender}: {message}")
+
+            # Serialize dictionary to JSON
+            json_data = json.dumps(data)
+            broadcast(json_data.encode())
         except:
             index = clients.index(client)
             clients.remove(client)
@@ -37,12 +43,21 @@ def receive():
         client, address = server.accept()
         print(f"Connected with {str(address)}!")
 
-        client.send("NICK".encode('utf-8'))
+        message = "NICK"
+        sender = "Server"
+        data = {'sender': sender, 'message': message}
+        json_data = json.dumps(data)
+        client.send(json_data.encode())
+
         nickname = client.recv(1024).decode('utf-8')
 
         print(f"Nickname of the client is {nickname}\n")
         message = f"{nickname} Connected to the Server!\n"
-        broadcast(message.encode('utf-8'))
+        sender = "Server"
+        data = {'sender': sender, 'message': message}
+
+        json_data = json.dumps(data)
+        broadcast(json_data.encode())
 
         nicknames.append(nickname)
         clients.append(client)

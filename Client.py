@@ -1,15 +1,18 @@
+import json
 import socket
 import threading
 import tkinter
 import tkinter.scrolledtext
+from cipher.HybridCipher import hybrid_encrypt, hybrid_decrypt
 
 
 class Client:
-    def __init__(self, host, port, nickname, isSecure):
+    def __init__(self, host, port, nickname, key, isSecure):
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.sock.connect((host, port))
 
         self.nickname = nickname
+        self.KEY = key
 
         self.gui_done = False
         self.running = True
@@ -53,7 +56,11 @@ class Client:
         self.win.mainloop()
 
     def write(self):
-        message = f"{self.input_area.get('1.0', 'end')}"
+        if self.isSecure:
+            message = hybrid_encrypt(f"{self.input_area.get('1.0', 'end')}", self.KEY)
+        else:
+            message = f"{self.input_area.get('1.0', 'end')}"
+
         self.sock.send(message.encode('utf-8'))
         self.input_area.delete('1.0', 'end')
 
@@ -66,12 +73,20 @@ class Client:
     def receive(self):
         while self.running:
             try:
-                message = self.sock.recv(1024).decode('utf-8')
-                if message == "NICK":
+                message_dict = json.loads(self.sock.recv(1024).decode())
+                if message_dict['message'] == "NICK":
                     self.sock.send((self.nickname).encode('utf-8'))
                 elif self.gui_done:
                     self.text_area.config(state="normal")
-                    self.text_area.insert('end', message)
+                    if (message_dict['sender'] == "Server"):
+                        self.text_area.insert('end', message_dict['message'])
+                    else:
+                        if self.isSecure:
+                            message = f"{message_dict['sender']}: {hybrid_decrypt(message_dict['message'], self.KEY)}\n"
+                        else:
+                            message = f"{message_dict['sender']}: {message_dict['message']}"
+                        self.text_area.insert('end', message)
+
                     self.text_area.yview('end')
                     self.text_area.config(state="disabled")
             except ConnectionAbortedError:
