@@ -24,7 +24,7 @@ def handle(client):
             sender = nicknames[clients.index(client)]
             data = {'sender': sender, 'message': message}
 
-            print(f"{sender}: {message}")
+            print(f"{sender}: {message.strip()}")
 
             # Serialize dictionary to JSON
             json_data = json.dumps(data)
@@ -41,7 +41,7 @@ def handle(client):
 def receive():
     while True:
         client, address = server.accept()
-        print(f"Connected with {str(address)}!")
+        print(f"\nConnected with {str(address)}!")
 
         message = "NICK"
         sender = "Server"
@@ -66,5 +66,5 @@ def receive():
         thread.start()
 
 
-print("Server Running...\n")
+print("Server Running...")
 receive()

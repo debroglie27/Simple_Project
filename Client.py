@@ -1,8 +1,10 @@
+import os
 import json
 import socket
 import threading
 import tkinter
 import tkinter.scrolledtext
+from dotenv import load_dotenv
 from cipher.HybridCipher import hybrid_encrypt, hybrid_decrypt
 
 
@@ -98,10 +100,14 @@ class Client:
 
 
 if __name__ == "__main__":
+    load_dotenv()
+
     HOST = "127.0.0.1"
     PORT = 9090
 
     nickname = "client"
     isSecure = False
 
-    Client(HOST, PORT, nickname, isSecure)
+    key = os.getenv('KEY')
+
+    Client(HOST, PORT, nickname, key, isSecure)
