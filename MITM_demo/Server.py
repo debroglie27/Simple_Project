@@ -81,12 +81,9 @@ class Server:
 
 if __name__ == "__main__":
     HOST = "127.0.0.1"
+    PORT = 9000
 
-    server1 = Server(HOST, 8000)
-    server2 = Server(HOST, 9000)
+    server = Server(HOST, PORT)
+    serverThread = threading.Thread(target=server.receive)
 
-    s1 = threading.Thread(target=server1.receive)
-    s2 = threading.Thread(target=server2.receive)
-
-    s1.start()
-    s2.start()
+    serverThread.start()
