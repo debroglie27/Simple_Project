@@ -1,4 +1,4 @@
-from Client import Client
+from MITM_demo.Client import Client
 
 HOST = "127.0.0.1"
 
