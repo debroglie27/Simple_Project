@@ -1,8 +1,12 @@
+import os
 import json
 import socket
 import threading
 import tkinter
 import tkinter.scrolledtext
+import tkinter.messagebox
+from dotenv import load_dotenv
+from Hashing import hash
 
 
 class Client:
@@ -11,6 +15,9 @@ class Client:
         self.sock.connect((host, port))
 
         self.nickname = nickname
+
+        load_dotenv()
+        self.KEY = os.getenv('INTEGRITY_KEY')
 
         self.gui_done = False
         self.running = True
@@ -54,7 +61,13 @@ class Client:
 
     def write(self):
         message = f"{self.input_area.get('1.0', 'end')}"
-        self.sock.send(message.encode('utf-8'))
+        hash_message = hash(message, self.KEY)
+        data = {'message': message, 'hash_message': hash_message}
+
+        # Serialize dictionary to JSON
+        json_data = json.dumps(data)
+        self.sock.send(json_data.encode())
+
         self.input_area.delete('1.0', 'end')
 
     def stop(self):
@@ -74,15 +87,33 @@ class Client:
                     if (message_dict['sender'] == "Server"):
                         self.text_area.insert('end', message_dict['message'])
                     else:
-                        message = f"{message_dict['sender']}: {message_dict['message']}"
-                        self.text_area.insert('end', message)
+                        message = message_dict['message']
+
+                        hash_message_received = message_dict['hash_message']
+                        hash_message_calculated = hash(message, self.KEY)
+
+                        # Checking integrity
+                        if (hash_message_received != hash_message_calculated):
+                            tkinter.messagebox.showerror("Integrity Check Failed", "Received message integrity check failed. Message discarded.", parent=self.win)
+                        else:
+                            message = f"{message_dict['sender']}: {message_dict['message']}"
+                            self.text_area.insert('end', message)
+
 
                     self.text_area.yview('end')
                     self.text_area.config(state="disabled")
             except ConnectionAbortedError:
                 break
-            except:
-                print("Error")
+            except json.JSONDecodeError:
+                print("Error decoding JSON.")
+                self.sock.close()
+                break
+            except socket.error as e:
+                print("Socket error:", e)
+                self.sock.close()
+                break
+            except Exception as e:
+                print("Error:", e)
                 self.sock.close()
                 break
 

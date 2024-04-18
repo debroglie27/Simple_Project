@@ -26,9 +26,13 @@ class Server:
     def handle(self, client):
         while True:
             try:
-                message = client.recv(1024).decode('utf-8')
+                message_dict = json.loads(client.recv(1024).decode())
+
                 sender = self.nicknames[self.clients.index(client)]
-                data = {'sender': sender, 'message': message}
+                # Change integrity by changing the below message
+                message = message_dict['message']
+                hash_message = message_dict['hash_message']
+                data = {'sender': sender, 'message': message, 'hash_message': hash_message}
 
                 print(f"{sender}: {message.strip()}")
 
