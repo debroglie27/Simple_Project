@@ -16,7 +16,7 @@ class Client:
         self.nickname = nickname
 
         load_dotenv()
-        self.KEY = os.getenv('KEY')
+        self.KEY = os.getenv('CIPHER_KEY')
 
         self.gui_done = False
         self.running = True
@@ -103,6 +103,6 @@ if __name__ == "__main__":
     nickname = "client"
     isSecure = False
 
-    key = os.getenv('KEY')
+    key = os.getenv('CIPHER_KEY')
 
     Client(HOST, PORT, nickname, key, isSecure)
