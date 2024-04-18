@@ -10,7 +10,8 @@ class Server:
 
         self.clients = []
         self.nicknames = []
-
+        
+        # Creating the server socket
         self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.server.bind((HOST, PORT))
 
@@ -29,10 +30,9 @@ class Server:
                 message = client.recv(1024).decode('utf-8')
                 sender = self.nicknames[self.clients.index(client)]
 
-                if (sender == "Mallory" and self.PORT == 8000):
+                if (sender == "Mallory-Alice"):
                     sender = "Bob"
-                
-                if (sender == "Mallory" and self.PORT == 9000):
+                elif (sender == "Mallory-bob"):
                     sender = "Alice"
 
                 data = {'sender': sender, 'message': message}
@@ -56,22 +56,31 @@ class Server:
             client, address = self.server.accept()
             print(f"\nConnected with {str(address)}!")
 
-            message = "NICK"
+            # Preparing the data to be sent to find out nickname of the client
             sender = "Server"
+            message = "NICK"
             data = {'sender': sender, 'message': message}
+
+            # Sending the request for knowing the nickname of the client
             json_data = json.dumps(data)
             client.send(json_data.encode())
-
             nickname = client.recv(1024).decode('utf-8')
 
             print(f"Nickname of the client is {nickname}\n")
-            message = f"{nickname} Connected to the Server!\n"
+
+            if (nickname == "Mallory-Alice"):
+                nickname = "Bob"
+            elif (nickname == "Mallory-Bob"):
+                nickname = "Alice"
+            
             sender = "Server"
+            message = f"{nickname} Connected to the Server!\n"
             data = {'sender': sender, 'message': message}
 
             json_data = json.dumps(data)
             self.broadcast(json_data.encode())
 
+            # Storing the nickname and client socket
             self.nicknames.append(nickname)
             self.clients.append(client)
 
