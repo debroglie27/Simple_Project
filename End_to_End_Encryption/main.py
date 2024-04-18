@@ -1,4 +1,5 @@
 import os
+import time
 import threading
 from dotenv import load_dotenv
 from Client import Client
@@ -17,6 +18,14 @@ server = Server(HOST, PORT)
 serverThread = threading.Thread(target=server.receive)
 serverThread.start()
 
-# Connecting the Clients
+# Delay for server to setup properly
+time.sleep(0.5)
+
+# Connecting Alice with the server
 alice = Client(HOST, PORT, "Alice", key, isSecure)
+
+# Delay for Alice to connect with server properly
+time.sleep(0.5)
+
+# Connecting Bob with the server
 bob = Client(HOST, PORT, "Bob", key, isSecure)
