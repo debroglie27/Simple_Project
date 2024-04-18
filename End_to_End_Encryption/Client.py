@@ -9,16 +9,17 @@ from cipher.HybridCipher import hybrid_encrypt, hybrid_decrypt
 
 
 class Client:
-    def __init__(self, host, port, nickname, key, isSecure):
+    def __init__(self, host, port, nickname):
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.sock.connect((host, port))
 
         self.nickname = nickname
-        self.KEY = key
+
+        load_dotenv()
+        self.KEY = os.getenv('KEY')
 
         self.gui_done = False
         self.running = True
-        self.isSecure = isSecure
 
         gui_thread = threading.Thread(target=self.gui_loop)
         receive_thread = threading.Thread(target=self.receive)
@@ -58,10 +59,7 @@ class Client:
         self.win.mainloop()
 
     def write(self):
-        if self.isSecure:
-            message = hybrid_encrypt(f"{self.input_area.get('1.0', 'end')}", self.KEY)
-        else:
-            message = f"{self.input_area.get('1.0', 'end')}"
+        message = hybrid_encrypt(f"{self.input_area.get('1.0', 'end')}", self.KEY)
 
         self.sock.send(message.encode('utf-8'))
         self.input_area.delete('1.0', 'end')
@@ -83,10 +81,7 @@ class Client:
                     if (message_dict['sender'] == "Server"):
                         self.text_area.insert('end', message_dict['message'])
                     else:
-                        if self.isSecure:
-                            message = f"{message_dict['sender']}: {hybrid_decrypt(message_dict['message'], self.KEY)}\n"
-                        else:
-                            message = f"{message_dict['sender']}: {message_dict['message']}"
+                        message = f"{message_dict['sender']}: {hybrid_decrypt(message_dict['message'], self.KEY)}\n"
                         self.text_area.insert('end', message)
 
                     self.text_area.yview('end')
