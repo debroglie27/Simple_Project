@@ -1,5 +1,6 @@
 import json
 import socket
+import random
 import threading
 
 
@@ -11,6 +12,8 @@ class Server:
         self.clients = []
         self.nicknames = []
 
+        self.probability = 0.2
+
         self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.server.bind((HOST, PORT))
 
@@ -18,6 +21,11 @@ class Server:
 
         print(f"Server Listening at PORT: {self.PORT}")
 
+    def modify(self, message):
+        if random.random() < self.probability:
+            message = message + "-changed"
+
+        return message
 
     def broadcast(self, message):
         for client in self.clients:
@@ -29,8 +37,7 @@ class Server:
                 message_dict = json.loads(client.recv(1024).decode())
 
                 sender = self.nicknames[self.clients.index(client)]
-                # Change integrity by changing the below message
-                message = message_dict['message']
+                message = self.modify(message_dict['message'])
                 hash_message = message_dict['hash_message']
                 data = {'sender': sender, 'message': message, 'hash_message': hash_message}
 
