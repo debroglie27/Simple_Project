@@ -1,5 +1,9 @@
 # Principles of Data and System Security (CS745) Project
-This project is for CS745 course (Principles of Data and System Security).
+This project is for CS745 course (Principles of Data and System Security). This project makes use of 2 research papers and 1 article.
+
+* [Design of Hybrid Cryptography System based on Vigenere Cipher and Polybius Cipher](https://ieeexplore.ieee.org/abstract/document/9199997)
+* [An Extended Version of the Polybius Cipher](https://citeseerx.ist.psu.edu/document?repid=rep1&type=pdf&doi=35f5b5360154090df72c48fa7e290b807dbef113)
+* [SHA-256 Cryptographic Hash Algorithm](https://www.movable-type.co.uk/scripts/sha256.html)
 
 ## Project Aim
 This projects aims to demonstrate 4 things:
@@ -13,8 +17,8 @@ This projects aims to demonstrate 4 things:
 Just download all the python packages mentioned in the **requirements.txt** file. Then create a **.env file** inside the parent directory and include the keys for end-to-end encryption and end-to-end integrity check.
 
 ```
-CIPHER_KEY=<Add Cipher Key>
-INTEGRITY_KEY=<Add Integrity Key>
+CIPHER_KEY=<Insert Cipher Key>
+INTEGRITY_KEY=<Insert Integrity Key>
 ```
 
 Now go inside the folder whose demonstration you want to see and run the main.py file.
