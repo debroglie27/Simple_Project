@@ -23,6 +23,10 @@ INTEGRITY_KEY=<Insert Integrity Key>
 
 Now go inside the folder whose demonstration you want to see and run the main.py file.
 
+## User Interface
+
+<img alt="UI Image" src="./UI_Images/UI_Image.png" width="500">
+
 ### Simple Communication
 Using **socket** and **tkinter** created a simple chat app. A server is used which will handle all the clients and clients would need to connect with the server. After connection is established clients can talk with each other like in a group chat. The client sends a message to the server and the server broadcasts that message to all the other clients.
 
