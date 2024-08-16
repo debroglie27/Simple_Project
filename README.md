@@ -1,4 +1,4 @@
-# Principles of Data and System Security (CS745) Project
+# End-To-End Encrypted Chat App
 This project is for CS745 course (Principles of Data and System Security). This project makes use of 2 research papers and 1 article.
 
 * [Design of Hybrid Cryptography System based on Vigenere Cipher and Polybius Cipher](https://ieeexplore.ieee.org/abstract/document/9199997)
